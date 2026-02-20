@@ -1,0 +1,936 @@
+/* ================================================================
+   Smart Triage – Symptom Priority Tool
+   Hospital-themed stylesheet
+   ================================================================ */
+
+/* ── Design Tokens ────────────────────────────────────────────── */
+:root {
+    /* Palette — dark teal + warm accents */
+    --teal-900: #0b3d3e;
+    --teal-800: #0e4f50;
+    --teal-700: #127072;
+    --teal-600: #179092;
+    --teal-500: #1aabb0;
+    --teal-100: #d0f4f5;
+    --teal-50: #eafbfb;
+
+    --white: #ffffff;
+    --off-white: #f0f6f7;
+    --gray-100: #e8eef0;
+    --gray-200: #d1dce0;
+    --gray-400: #8fa4ab;
+    --gray-600: #546a72;
+    --gray-800: #2b3e45;
+    --dark: #111b1e;
+
+    --red-500: #e53e3e;
+    --red-100: #fff5f5;
+    --red-glow: rgba(229, 62, 62, .15);
+
+    --orange-500: #dd6b20;
+    --orange-100: #fffaf0;
+    --orange-glow: rgba(221, 107, 32, .15);
+
+    --green-500: #38a169;
+    --green-100: #f0fff4;
+    --green-glow: rgba(56, 161, 105, .15);
+
+    /* Typography */
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+
+    /* Spacing */
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+    --shadow: 0 4px 24px rgba(11, 61, 62, .08);
+    --shadow-lg: 0 12px 48px rgba(11, 61, 62, .12);
+
+    /* Transitions */
+    --ease: cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ── Reset & Base ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--gray-800);
+    background: var(--off-white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.site-header {
+    background: linear-gradient(135deg, var(--teal-900) 0%, var(--teal-700) 100%);
+    color: var(--white);
+    padding: 2rem 1.5rem 1.8rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle pattern overlay */
+.site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, .06) 0%, transparent 60%),
+        radial-gradient(circle at 80% 30%, rgba(255, 255, 255, .04) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.header-inner {
+    position: relative;
+    z-index: 1;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+}
+
+.logo h1 {
+    font-weight: 800;
+    font-size: 1.85rem;
+    letter-spacing: -.5px;
+}
+
+/* CSS-only medical cross */
+.med-cross {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.cross-v,
+.cross-h {
+    position: absolute;
+    background: var(--white);
+    border-radius: 3px;
+}
+
+.cross-v {
+    width: 12px;
+    height: 36px;
+    left: 12px;
+    top: 0;
+}
+
+.cross-h {
+    width: 36px;
+    height: 12px;
+    left: 0;
+    top: 12px;
+}
+
+.tagline {
+    margin-top: .35rem;
+    font-size: .95rem;
+    font-weight: 500;
+    opacity: .82;
+    letter-spacing: .3px;
+}
+
+/* ── Container ────────────────────────────────────────────────── */
+.container {
+    width: 100%;
+    max-width: 780px;
+    margin: 2.5rem auto;
+    padding: 0 1.25rem;
+    flex: 1;
+}
+
+/* ── Card (glassmorphism) ─────────────────────────────────────── */
+.card {
+    background: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, .55);
+    border-radius: var(--radius);
+    padding: 2rem 2.2rem;
+    box-shadow: var(--shadow);
+    transition: box-shadow .3s var(--ease), transform .3s var(--ease);
+    animation: fadeUp .5s var(--ease) both;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--teal-800);
+    margin-bottom: .25rem;
+}
+
+.card-subtitle {
+    color: var(--gray-600);
+    font-size: .9rem;
+    margin-bottom: 1.75rem;
+}
+
+/* ── Fieldset & Fields ────────────────────────────────────────── */
+fieldset {
+    border: none;
+}
+
+.field-group {
+    margin-bottom: 1.75rem;
+}
+
+.field-group legend {
+    font-weight: 600;
+    font-size: .98rem;
+    color: var(--teal-800);
+    margin-bottom: .75rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: .85rem;
+}
+
+.form-field label {
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: .3rem;
+}
+
+.req {
+    color: var(--red-500);
+}
+
+.form-field input,
+.form-field textarea {
+    padding: .7rem .9rem;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: .92rem;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: border-color .25s var(--ease), box-shadow .25s var(--ease);
+    outline: none;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+    border-color: var(--teal-500);
+    box-shadow: 0 0 0 3px rgba(26, 171, 176, .15);
+}
+
+.form-field textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+/* Error messages */
+.error-msg {
+    font-size: .8rem;
+    color: var(--red-500);
+    margin-top: .25rem;
+    display: none;
+}
+
+.error-msg.visible {
+    display: block;
+    animation: shake .35s var(--ease);
+}
+
+/* ── Severity Radio Chips ─────────────────────────────────────── */
+.severity-options {
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+}
+
+.severity-label {
+    cursor: pointer;
+}
+
+.severity-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.severity-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .55rem 1.15rem;
+    border: 2px solid var(--gray-200);
+    border-radius: 50px;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    background: var(--white);
+    transition: all .25s var(--ease);
+    user-select: none;
+}
+
+.severity-chip:hover {
+    border-color: var(--teal-500);
+    color: var(--teal-700);
+}
+
+/* Checked states */
+.severity-mild input:checked~.severity-chip {
+    border-color: var(--green-500);
+    background: var(--green-100);
+    color: var(--green-500);
+    box-shadow: 0 0 0 3px var(--green-glow);
+}
+
+.severity-moderate input:checked~.severity-chip {
+    border-color: var(--orange-500);
+    background: var(--orange-100);
+    color: var(--orange-500);
+    box-shadow: 0 0 0 3px var(--orange-glow);
+}
+
+.severity-severe input:checked~.severity-chip {
+    border-color: var(--red-500);
+    background: var(--red-100);
+    color: var(--red-500);
+    box-shadow: 0 0 0 3px var(--red-glow);
+}
+
+/* ── Symptom Checkboxes Grid ──────────────────────────────────── */
+.symptom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: .6rem;
+}
+
+.symptom-label {
+    cursor: pointer;
+}
+
+.symptom-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.symptom-chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: .55rem .75rem;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    font-size: .84rem;
+    font-weight: 500;
+    color: var(--gray-600);
+    background: var(--white);
+    transition: all .2s var(--ease);
+    user-select: none;
+}
+
+.symptom-chip:hover {
+    border-color: var(--teal-500);
+    color: var(--teal-700);
+    transform: translateY(-1px);
+}
+
+.symptom-label input:checked~.symptom-chip {
+    border-color: var(--teal-600);
+    background: var(--teal-50);
+    color: var(--teal-800);
+    box-shadow: 0 0 0 3px rgba(26, 171, 176, .12);
+    font-weight: 600;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: .8rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-family: var(--font);
+    font-size: .95rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .3s var(--ease);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--teal-700), var(--teal-500));
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(18, 112, 114, .3);
+    width: 100%;
+    margin-top: .75rem;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(18, 112, 114, .38);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-icon {
+    font-size: 1.15rem;
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--teal-700);
+    border: 2px solid var(--teal-600);
+}
+
+.btn-secondary:hover {
+    background: var(--teal-50);
+    transform: translateY(-2px);
+}
+
+/* ── Result Page ──────────────────────────────────────────────── */
+
+/* Priority Banner */
+.priority-banner {
+    text-align: center;
+    padding: 2.2rem 2rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.75rem;
+    animation: fadeUp .45s var(--ease) both;
+}
+
+.priority-red {
+    background: linear-gradient(135deg, #c53030, #e53e3e);
+    color: var(--white);
+}
+
+.priority-orange {
+    background: linear-gradient(135deg, #c05621, #ed8936);
+    color: var(--white);
+}
+
+.priority-green {
+    background: linear-gradient(135deg, #276749, #48bb78);
+    color: var(--white);
+}
+
+.priority-badge {
+    display: inline-block;
+    padding: .3rem 1.1rem;
+    border-radius: 50px;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, .22);
+    margin-bottom: .65rem;
+}
+
+.priority-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: .3rem;
+}
+
+.priority-score {
+    font-size: .9rem;
+    opacity: .88;
+}
+
+/* Result columns */
+.result-columns {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Summary table */
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: .75rem;
+}
+
+.summary-table th,
+.summary-table td {
+    text-align: left;
+    padding: .55rem .4rem;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: .88rem;
+}
+
+.summary-table th {
+    color: var(--gray-400);
+    font-weight: 600;
+    width: 105px;
+    vertical-align: top;
+}
+
+.summary-table td {
+    color: var(--gray-800);
+}
+
+.description-cell {
+    font-style: italic;
+    color: var(--gray-600);
+}
+
+/* Tags */
+.severity-tag {
+    display: inline-block;
+    padding: .15rem .65rem;
+    border-radius: 50px;
+    font-size: .78rem;
+    font-weight: 700;
+}
+
+.severity-tag-mild {
+    background: var(--green-100);
+    color: var(--green-500);
+}
+
+.severity-tag-moderate {
+    background: var(--orange-100);
+    color: var(--orange-500);
+}
+
+.severity-tag-severe {
+    background: var(--red-100);
+    color: var(--red-500);
+}
+
+.symptom-tag {
+    display: inline-block;
+    padding: .15rem .6rem;
+    margin: .15rem .2rem;
+    border-radius: 50px;
+    font-size: .76rem;
+    font-weight: 600;
+    background: var(--teal-50);
+    color: var(--teal-700);
+    border: 1px solid var(--teal-100);
+}
+
+/* Reassurance */
+.reassurance-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.reassurance-text {
+    font-size: .9rem;
+    line-height: 1.7;
+    color: var(--gray-600);
+    margin-top: .65rem;
+}
+
+/* Instructions & Steps cards */
+.instructions-card,
+.steps-card {
+    margin-bottom: 1.5rem;
+    animation: fadeUp .55s var(--ease) both;
+}
+
+.instructions-card {
+    animation-delay: .1s;
+}
+
+.steps-card {
+    animation-delay: .2s;
+}
+
+.instruction-list,
+.steps-list {
+    margin-top: .65rem;
+    padding-left: 1.3rem;
+}
+
+.instruction-list li,
+.steps-list li {
+    margin-bottom: .55rem;
+    font-size: .9rem;
+    line-height: 1.6;
+    color: var(--gray-800);
+}
+
+/* Back button wrapper */
+.back-wrapper {
+    text-align: center;
+    margin: 1.5rem 0;
+    animation: fadeUp .6s var(--ease) .25s both;
+}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+.site-footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: .8rem;
+    color: var(--gray-400);
+    margin-top: auto;
+}
+
+/* ── Animations ───────────────────────────────────────────────── */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20% {
+        transform: translateX(-5px);
+    }
+
+    40% {
+        transform: translateX(5px);
+    }
+
+    60% {
+        transform: translateX(-3px);
+    }
+
+    80% {
+        transform: translateX(3px);
+    }
+}
+
+/* ── Navigation Link ─────────────────────────────────────────── */
+.nav-link {
+    display: inline-block;
+    margin-top: .6rem;
+    padding: .35rem 1rem;
+    border-radius: 50px;
+    font-size: .82rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, .85);
+    background: rgba(255, 255, 255, .12);
+    text-decoration: none;
+    transition: all .25s var(--ease);
+    letter-spacing: .3px;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, .22);
+    color: var(--white);
+    transform: translateY(-1px);
+}
+
+/* ── Hospital Dashboard ──────────────────────────────────────── */
+.hospital-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.25rem;
+    flex: 1;
+}
+
+/* Stats bar */
+.stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+    animation: fadeUp .45s var(--ease) both;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.4rem 1rem;
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, .78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, .55);
+    box-shadow: var(--shadow);
+    transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: .78rem;
+    font-weight: 600;
+    margin-top: .35rem;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+}
+
+.stat-total .stat-number {
+    color: var(--teal-700);
+}
+
+.stat-total .stat-label {
+    color: var(--teal-600);
+}
+
+.stat-high .stat-number {
+    color: var(--red-500);
+}
+
+.stat-high .stat-label {
+    color: var(--red-500);
+}
+
+.stat-medium .stat-number {
+    color: var(--orange-500);
+}
+
+.stat-medium .stat-label {
+    color: var(--orange-500);
+}
+
+.stat-low .stat-number {
+    color: var(--green-500);
+}
+
+.stat-low .stat-label {
+    color: var(--green-500);
+}
+
+/* Dashboard card */
+.dash-card {
+    animation: fadeUp .5s var(--ease) .1s both;
+}
+
+.dash-card .card-title {
+    margin-bottom: 1rem;
+}
+
+/* Table wrapper for horizontal scroll on small screens */
+.table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Dashboard table */
+.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .88rem;
+}
+
+.dash-table thead {
+    background: var(--teal-900);
+    color: var(--white);
+}
+
+.dash-table th {
+    padding: .75rem .65rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    white-space: nowrap;
+}
+
+.dash-table th:first-child {
+    border-radius: var(--radius-sm) 0 0 0;
+}
+
+.dash-table th:last-child {
+    border-radius: 0 var(--radius-sm) 0 0;
+}
+
+.dash-table td {
+    padding: .7rem .65rem;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-800);
+    vertical-align: middle;
+}
+
+.dash-table tbody tr:nth-child(even) {
+    background: rgba(208, 244, 245, .18);
+}
+
+.dash-table tbody tr:hover {
+    background: var(--teal-50);
+}
+
+.cell-num {
+    font-weight: 700;
+    color: var(--gray-400);
+    text-align: center;
+    width: 40px;
+}
+
+.cell-name {
+    font-weight: 600;
+}
+
+.cell-time {
+    white-space: nowrap;
+    color: var(--gray-400);
+    font-size: .82rem;
+}
+
+/* Priority pill badges */
+.priority-pill {
+    display: inline-block;
+    padding: .2rem .75rem;
+    border-radius: 50px;
+    font-size: .76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.priority-pill-high {
+    background: var(--red-100);
+    color: var(--red-500);
+    box-shadow: 0 0 0 2px var(--red-glow);
+}
+
+.priority-pill-medium {
+    background: var(--orange-100);
+    color: var(--orange-500);
+    box-shadow: 0 0 0 2px var(--orange-glow);
+}
+
+.priority-pill-low {
+    background: var(--green-100);
+    color: var(--green-500);
+    box-shadow: 0 0 0 2px var(--green-glow);
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    animation: fadeUp .5s var(--ease) both;
+}
+
+.empty-icon {
+    font-size: 3.5rem;
+    margin-bottom: .75rem;
+}
+
+.empty-state h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--teal-800);
+    margin-bottom: .4rem;
+}
+
+.empty-state p {
+    color: var(--gray-400);
+    font-size: .92rem;
+    margin-bottom: 1.5rem;
+}
+
+.empty-btn {
+    max-width: 260px;
+    margin: 0 auto;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 700px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .result-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .priority-title {
+        font-size: 1.15rem;
+    }
+
+    .symptom-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+
+    .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 1.45rem;
+    }
+
+    .severity-options {
+        flex-direction: column;
+    }
+
+    .severity-chip {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .container {
+        padding: 0 .75rem;
+        margin: 1.5rem auto;
+    }
+
+    .stats-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .hospital-container {
+        padding: 0 .75rem;
+        margin: 1.5rem auto;
+    }
+}

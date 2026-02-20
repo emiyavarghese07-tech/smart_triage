@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Smart Triage – an intelligent symptom priority tool for emergency consultation guidance.">
+  <title>Smart Triage – Symptom Priority Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+  <!-- ───────────────────── Header ───────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <!-- CSS-only medical cross icon -->
+        <span class="med-cross" aria-hidden="true">
+          <span class="cross-v"></span>
+          <span class="cross-h"></span>
+        </span>
+        <h1>Smart Triage</h1>
+      </div>
+      <p class="tagline">Symptom Priority &amp; Guidance Tool</p>
+      <a href="/hospital" class="nav-link">Hospital Portal →</a>
+    </div>
+  </header>
+
+  <!-- ───────────────────── Main ───────────────────── -->
+  <main class="container">
+    <section class="card form-card">
+      <h2 class="card-title">Patient Intake Form</h2>
+      <p class="card-subtitle">Please fill in all fields so we can assess the appropriate level of care.</p>
+
+      <form action="/triage" method="POST" id="triageForm" novalidate>
+
+        <!-- ── Personal Information ── -->
+        <fieldset class="field-group">
+          <legend>Personal Information</legend>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="name">Full Name <span class="req">*</span></label>
+              <input type="text" id="name" name="name" placeholder="e.g. Priya Sharma" required>
+              <span class="error-msg" id="nameError">Please enter your name.</span>
+            </div>
+
+            <div class="form-field">
+              <label for="age">Age <span class="req">*</span></label>
+              <input type="number" id="age" name="age" min="0" max="120" placeholder="e.g. 28" required>
+              <span class="error-msg" id="ageError">Please enter a valid age (0–120).</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="contact">Contact Number <span class="req">*</span></label>
+            <input type="tel" id="contact" name="contact" placeholder="e.g. +91 98765 43210" required>
+            <span class="error-msg" id="contactError">Please enter a contact number.</span>
+          </div>
+        </fieldset>
+
+        <!-- ── Severity ── -->
+        <fieldset class="field-group">
+          <legend>How severe do your symptoms feel?</legend>
+
+          <div class="severity-options">
+            <label class="severity-label severity-mild">
+              <input type="radio" name="severity" value="Mild" required>
+              <span class="severity-chip">😊 Mild</span>
+            </label>
+            <label class="severity-label severity-moderate">
+              <input type="radio" name="severity" value="Moderate">
+              <span class="severity-chip">😟 Moderate</span>
+            </label>
+            <label class="severity-label severity-severe">
+              <input type="radio" name="severity" value="Severe">
+              <span class="severity-chip">🚨 Severe</span>
+            </label>
+          </div>
+          <span class="error-msg" id="severityError">Please select a severity level.</span>
+        </fieldset>
+
+        <!-- ── Symptoms ── -->
+        <fieldset class="field-group">
+          <legend>Select all symptoms that apply <span class="req">*</span></legend>
+
+          <div class="symptom-grid">
+            {% for symptom in symptoms %}
+            <label class="symptom-label">
+              <input type="checkbox" name="symptoms" value="{{ symptom }}">
+              <span class="symptom-chip">{{ symptom }}</span>
+            </label>
+            {% endfor %}
+          </div>
+          <span class="error-msg" id="symptomsError">Please select at least one symptom.</span>
+        </fieldset>
+
+        <!-- ── Description ── -->
+        <fieldset class="field-group">
+          <legend>Describe your condition</legend>
+
+          <div class="form-field">
+            <label for="description">Tell us more about what you are experiencing</label>
+            <textarea id="description" name="description" rows="4"
+              placeholder="e.g. I've had a sharp headache since this morning, and I feel dizzy when I stand up…"></textarea>
+          </div>
+        </fieldset>
+
+        <!-- ── Submit ── -->
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span class="btn-icon">⚕</span> Assess My Symptoms
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <!-- ───────────────────── Footer ───────────────────── -->
+  <footer class="site-footer">
+    <p>&copy; 2026 Smart Triage. For guidance only — not a substitute for professional medical advice.</p>
+  </footer>
+
+  <!-- ───────────────────── Client-side validation ───────────────────── -->
+  <script>
+    (function () {
+      const form = document.getElementById('triageForm');
+
+      function showError(id) {
+        document.getElementById(id).classList.add('visible');
+      }
+      function hideError(id) {
+        document.getElementById(id).classList.remove('visible');
+      }
+
+      // Live: clear errors on input
+      form.querySelectorAll('input, textarea').forEach(el => {
+        el.addEventListener('input', () => {
+          const errId = el.id + 'Error';
+          if (document.getElementById(errId)) hideError(errId);
+        });
+      });
+
+      // Severity radios
+      form.querySelectorAll('input[name="severity"]').forEach(r => {
+        r.addEventListener('change', () => hideError('severityError'));
+      });
+
+      // Symptom checkboxes
+      form.querySelectorAll('input[name="symptoms"]').forEach(c => {
+        c.addEventListener('change', () => hideError('symptomsError'));
+      });
+
+      form.addEventListener('submit', function (e) {
+        let valid = true;
+
+        // Name
+        if (!form.name.value.trim()) { showError('nameError'); valid = false; }
+        else hideError('nameError');
+
+        // Age
+        const age = parseInt(form.age.value, 10);
+        if (isNaN(age) || age < 0 || age > 120) { showError('ageError'); valid = false; }
+        else hideError('ageError');
+
+        // Contact
+        if (!form.contact.value.trim()) { showError('contactError'); valid = false; }
+        else hideError('contactError');
+
+        // Severity
+        if (!form.querySelector('input[name="severity"]:checked')) { showError('severityError'); valid = false; }
+        else hideError('severityError');
+
+        // Symptoms
+        if (!form.querySelector('input[name="symptoms"]:checked')) { showError('symptomsError'); valid = false; }
+        else hideError('symptomsError');
+
+        if (!valid) {
+          e.preventDefault();
+          // Scroll to first visible error
+          const firstErr = form.querySelector('.error-msg.visible');
+          if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>

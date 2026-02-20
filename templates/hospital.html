@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hospital Authority Dashboard – Smart Triage patient case overview.">
+  <title>Hospital Dashboard – Smart Triage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+  <!-- ───────────────────── Header ───────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="med-cross" aria-hidden="true">
+          <span class="cross-v"></span>
+          <span class="cross-h"></span>
+        </span>
+        <h1>Smart Triage</h1>
+      </div>
+      <p class="tagline">Hospital Authority Dashboard</p>
+      <a href="/" class="nav-link">← Patient Form</a>
+    </div>
+  </header>
+
+  <!-- ───────────────────── Main ───────────────────── -->
+  <main class="hospital-container">
+
+    <!-- ── Stats Bar ── -->
+    <section class="stats-bar" aria-label="Case Statistics">
+      <div class="stat-card stat-total">
+        <span class="stat-number">{{ submissions | length }}</span>
+        <span class="stat-label">Total Cases</span>
+      </div>
+      <div class="stat-card stat-high">
+        <span class="stat-number">{{ submissions | selectattr('priority', 'equalto', 'High') | list | length }}</span>
+        <span class="stat-label">High Priority</span>
+      </div>
+      <div class="stat-card stat-medium">
+        <span class="stat-number">{{ submissions | selectattr('priority', 'equalto', 'Medium') | list | length }}</span>
+        <span class="stat-label">Medium Priority</span>
+      </div>
+      <div class="stat-card stat-low">
+        <span class="stat-number">{{ submissions | selectattr('priority', 'equalto', 'Low') | list | length }}</span>
+        <span class="stat-label">Low Priority</span>
+      </div>
+    </section>
+
+    <!-- ── Cases Table ── -->
+    {% if submissions %}
+    <section class="card dash-card" aria-label="Patient Cases">
+      <h2 class="card-title">📋 Patient Cases</h2>
+      <div class="table-wrapper">
+        <table class="dash-table" id="casesTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Symptoms</th>
+              <th>Severity</th>
+              <th>Priority</th>
+              <th>Score</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for case in submissions | reverse %}
+            <tr>
+              <td class="cell-num">{{ submissions | length - loop.index0 }}</td>
+              <td class="cell-name">{{ case.name }}</td>
+              <td>{{ case.age }}</td>
+              <td>
+                {% for s in case.symptoms %}
+                <span class="symptom-tag">{{ s }}</span>
+                {% endfor %}
+              </td>
+              <td>
+                <span class="severity-tag severity-tag-{{ case.severity | lower }}">{{ case.severity }}</span>
+              </td>
+              <td>
+                <span class="priority-pill priority-pill-{{ case.priority | lower }}">{{ case.priority }}</span>
+              </td>
+              <td>{{ case.score }}</td>
+              <td class="cell-time">{{ case.timestamp }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {% else %}
+    <!-- ── Empty State ── -->
+    <section class="card empty-state">
+      <div class="empty-icon">🏥</div>
+      <h2>No Patient Cases Yet</h2>
+      <p>Submitted patient triage cases will appear here in real time.</p>
+      <a href="/" class="btn btn-primary empty-btn">← Go to Patient Form</a>
+    </section>
+    {% endif %}
+
+  </main>
+
+  <!-- ───────────────────── Footer ───────────────────── -->
+  <footer class="site-footer">
+    <p>&copy; 2026 Smart Triage. For guidance only — not a substitute for professional medical advice.</p>
+  </footer>
+
+</body>
+
+</html>
