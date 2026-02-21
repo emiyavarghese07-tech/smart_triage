@@ -144,10 +144,10 @@ Screenshots (Add at least 3)
   <img src="./s1.png" alt="Project Banner" width="100%">
 </p>
 <p align="center">
-  <img src="./img.png" alt="Project Banner" width="100%">
+  <img src="./s2.png" alt="Project Banner" width="100%">
 </p>
 <p align="center">
-  <img src="./img.png" alt="Project Banner" width="100%">
+  <img src="./s3.png" alt="Project Banner" width="100%">
 </p>
 
 Patient Intake Form – Collects personal details, severity, and symptoms
