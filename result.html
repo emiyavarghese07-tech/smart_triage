@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your AI triage assessment results — Smart Triage.">
+  <title>Triage Result – Smart Triage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .priority-red {
+      background: #fee2e2;
+      border-left: 5px solid #ef4444;
+      color: #991b1b;
+    }
+
+    .priority-orange {
+      background: #ffedd5;
+      border-left: 5px solid #f97316;
+      color: #9a3412;
+    }
+
+    .priority-yellow {
+      background: #fef9c3;
+      border-left: 5px solid #eab308;
+      color: #854d0e;
+    }
+
+    .priority-green {
+      background: #dcfce7;
+      border-left: 5px solid #22c55e;
+      color: #166534;
+    }
+
+    .priority-orange .priority-badge {
+      background: #f97316;
+      color: white;
+    }
+
+    .priority-yellow .priority-badge {
+      background: #eab308;
+      color: white;
+    }
+
+    .priority-green .priority-badge {
+      background: #22c55e;
+      color: white;
+    }
+
+    .ai-card {
+      border-top: 4px solid #3b82f6;
+    }
+
+    /* Blue highlight for AI */
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="med-cross" aria-hidden="true"><span class="cross-v"></span><span class="cross-h"></span></span>
+        <h1>Smart Triage</h1>
+      </div>
+      <p class="tagline">AI-Powered Assessment</p>
+      <a href="/hospital" class="nav-link">Hospital Portal →</a>
+    </div>
+  </header>
+
+  <main class="container result-page">
+    <!-- ── Priority Banner ── -->
+    <section class="priority-banner priority-{{ result.color }}" aria-label="Triage Priority">
+      <span class="priority-badge">{{ result.priority_label }}</span>
+      <h2 class="priority-title">Severity Level: {{ result.priority_color }}</h2>
+      <p class="priority-score">AI Assessment Score: <strong>{{ result.score }} / 10</strong></p>
+    </section>
+
+    <!-- Two-column area -->
+    <div class="result-columns">
+      <!-- ── AI Assessment ── -->
+      <section class="card summary-card ai-card">
+        <h3 class="card-title">🤖 AI Assessment Summary</h3>
+        <table class="summary-table">
+          <tr>
+            <th>Condition Summary</th>
+            <td>{{ result.summary }}</td>
+          </tr>
+          <tr>
+            <th>Probable Diagnosis</th>
+            <td>{{ result.probable_diagnosis }}</td>
+          </tr>
+          <tr>
+            <th>Risk Factors</th>
+            <td>{{ result.risk_factors }}</td>
+          </tr>
+          <tr>
+            <th>Recommended Dept</th>
+            <td><span class="priority-badge">{{ result.recommended_department }}</span></td>
+          </tr>
+        </table>
+
+        <div style="margin-top: 15px; background: #f8fafc; padding: 10px; border-radius: 6px;">
+          <h4 style="margin-top: 0;">Detailed Analysis:</h4>
+          <p style="font-size: 0.95rem; margin-bottom: 5px;"><em>{{ result.medical_description }}</em></p>
+          <p style="font-size: 0.95rem;"><em>{{ result.risk_explanation }}</em></p>
+        </div>
+      </section>
+
+      <!-- ── Patient Details ── -->
+      <section class="card reassurance-card">
+        <h3 class="card-title">📋 Patient Details</h3>
+        <table class="summary-table">
+          <tr>
+            <th>Name</th>
+            <td>{{ name }}</td>
+          </tr>
+          <tr>
+            <th>Age</th>
+            <td>{{ age }}</td>
+          </tr>
+          <tr>
+            <th>Contact</th>
+            <td>{{ contact }}</td>
+          </tr>
+          <tr>
+            <th>Reported Severity</th>
+            <td><span class="severity-tag severity-tag-{{ severity|lower }}">{{ severity }}</span></td>
+          </tr>
+          <tr>
+            <th>Symptoms</th>
+            <td>
+              {% for s in result.selected_symptoms %}
+              <span class="symptom-tag">{{ s }}</span>
+              {% endfor %}
+            </td>
+          </tr>
+          {% if description %}
+          <tr>
+            <th>Description</th>
+            <td class="description-cell">{{ description }}</td>
+          </tr>
+          {% endif %}
+        </table>
+      </section>
+    </div>
+
+    <!-- ── Immediate Actions ── -->
+    <section class="card instructions-card">
+      <h3 class="card-title">🛡️ Recommended Actions</h3>
+      <ul class="instruction-list">
+        {% for item in result.immediate_actions %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <!-- ── Medications ── -->
+    {% if result.medication_suggestions %}
+    <section class="card steps-card">
+      <h3 class="card-title">💊 Medication Suggestions</h3>
+      <p
+        style="color: #dc2626; font-size: 0.9rem; font-weight: 600; background: #fee2e2; padding: 10px; border-radius: 4px;">
+        {{ result.medication_suggestions_disclaimer }}</p>
+      <ul class="steps-list" style="margin-top: 10px;">
+        {% for step in result.medication_suggestions %}
+        <li>{{ step }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+
+    <div class="back-wrapper">
+      <a href="/" class="btn btn-secondary">← Back to Intake Form</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Smart Triage. For guidance only — not a substitute for professional medical advice.</p>
+  </footer>
+</body>
+
+</html>

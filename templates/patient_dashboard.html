@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Dashboard – Smart Triage</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <!-- ───────────────────── Header ───────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span class="med-cross" aria-hidden="true"></span>
+        <h1>Smart Triage</h1>
+      </a>
+      <p class="tagline">Patient Dashboard</p>
+      <div class="auth-links" style="display: flex; gap: 1rem; align-items: center;">
+        <span style="font-weight: 600; color: var(--primary-800);">{{ contact }}</span>
+        <a href="/patient/intake" class="nav-link">New Triage</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ───────────────────── Main ───────────────────── -->
+  <main class="hospital-container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="flash-alert flash-{{ category }}"
+      style="padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 2rem; background: var(--success-100); border-left: 4px solid var(--success-500); color: var(--success-500); font-weight: 600;">
+      {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <div style="margin-bottom: 2rem;">
+      <h2 style="font-size: 2rem; color: var(--primary-900);">Triage History</h2>
+      <p style="color: var(--text-secondary);">Here is the history of past triage assessments linked to: <strong>{{
+          contact }}</strong></p>
+    </div>
+
+    <!-- ── Cases Table ── -->
+    {% if submissions %}
+    <section class="card dash-card" aria-label="My Triage History">
+      <h2 class="card-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          style="vertical-align: middle; margin-right: 8px;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Assessment History
+      </h2>
+      <div class="table-wrapper">
+        <table class="dash-table" id="casesTable">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Symptoms</th>
+              <th>Severity</th>
+              <th>Diagnosis / Dept</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for case in submissions %}
+            <tr>
+              <td class="cell-time"><strong>{{ case.timestamp }}</strong></td>
+              <td>
+                {% for s in case.symptoms %}
+                <span class="symptom-tag">{{ s }}</span>
+                {% endfor %}
+              </td>
+              <td>
+                <span class="severity-tag severity-tag-{{ case.severity | lower }}">{{ case.severity }}</span>
+              </td>
+              <td>
+                <div style="font-weight: 600;">{{ case.probable_diagnosis }}</div>
+                <div style="font-size: 0.8rem; color: var(--text-tertiary);">{{ case.recommended_department }}</div>
+              </td>
+              <td>
+                <span class="priority-pill priority-pill-{{ case.priority | lower }}">{{ case.priority }}</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {% else %}
+    <!-- ── Empty State ── -->
+    <section class="card empty-state" style="text-align: center; padding: 4rem 2rem;">
+      <div class="empty-icon" style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;">📄</div>
+      <h2 style="font-size: 1.5rem; font-family: var(--font-heading); margin-bottom: 0.5rem;">No History Found</h2>
+      <p style="color: var(--text-tertiary); margin-bottom: 2rem;">You haven't submitted any triage assessments yet.</p>
+      <a href="/" class="btn btn-primary" style="display: inline-flex; width: auto; max-width: 250px;">
+        Start New Assessment
+      </a>
+    </section>
+    {% endif %}
+
+  </main>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart Triage – AI-powered symptom priority and emergency consultation guidance.">
+  <title>Welcome to Smart Triage</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="landing-body">
+  <!-- ───────────────────── Header ───────────────────── -->
+  <header class="site-header"
+    style="background: transparent; border-bottom: none; box-shadow: none; position: absolute; width: 100%;">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span class="med-cross" aria-hidden="true"></span>
+        <h1>Smart Triage</h1>
+      </a>
+      <div class="auth-links" style="display: flex; gap: 1rem; align-items: center;">
+        {% if current_user.is_authenticated %}
+        <span style="font-weight: 600; color: var(--primary-800);">{{ current_user.name or current_user.username
+          }}</span>
+        <a href="/logout" class="nav-link"
+          style="background: transparent; border: none; color: var(--text-secondary);">Log Out</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- ───────────────────── Hero / Landing ───────────────────── -->
+  <main class="landing-container">
+
+    <div class="landing-hero">
+      <h1 class="landing-title">AI-Powered Emergency Routing</h1>
+      <p class="landing-subtitle">Fast, accurate, and intelligent triage assessments to get you to the right care, right
+        now.</p>
+    </div>
+
+    <div class="role-selection">
+      <!-- Patient Card -->
+      <a href="/patient/intake" class="role-card">
+        <div class="role-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <h2 class="role-title">I am a Patient</h2>
+        <p class="role-desc">Start a new triage assessment, describe your symptoms to our AI, and view your medical
+          history.</p>
+        <div class="role-action">
+          Let's Start <span>→</span>
+        </div>
+      </a>
+
+      <!-- Hospital Card -->
+      <a href="/hospital" class="role-card">
+        <div class="role-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+          </svg>
+        </div>
+        <h2 class="role-title">Health Professional</h2>
+        <p class="role-desc">Access the hospital dashboard to overview incoming triage cases, severity rankings, and
+          real-time patient data.</p>
+        <div class="role-action">
+          Staff Portal <span>→</span>
+        </div>
+      </a>
+    </div>
+
+  </main>
+
+  <footer class="site-footer" style="margin-top: auto; background: transparent;">
+    <p>&copy; 2026 Smart Triage. For guidance only — not a substitute for professional medical advice.</p>
+  </footer>
+</body>
+
+</html>

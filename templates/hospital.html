@@ -6,25 +6,158 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Hospital Authority Dashboard – Smart Triage patient case overview.">
   <title>Hospital Dashboard – Smart Triage</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* ── Detail Panel Styles ── */
+    .case-row {
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .case-row:hover {
+      background: var(--surface-100, #f0f4ff);
+    }
+
+    .case-row.active-row {
+      background: var(--surface-100, #f0f4ff);
+      border-bottom: none;
+    }
+
+    .detail-row {
+      display: none;
+    }
+
+    .detail-row.open {
+      display: table-row;
+    }
+
+    .detail-row td {
+      padding: 0 !important;
+      border-top: none;
+    }
+
+    .detail-panel {
+      background: linear-gradient(135deg, var(--surface-50, #f8faff) 0%, var(--surface-100, #f0f4ff) 100%);
+      padding: 1.5rem 2rem;
+      border-top: 2px solid var(--primary-200, #c0d0ff);
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        max-height: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        max-height: 600px;
+        transform: translateY(0);
+      }
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .detail-section h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-tertiary, #888);
+      margin: 0 0 0.4rem;
+    }
+
+    .detail-section p,
+    .detail-section ul {
+      font-size: 0.92rem;
+      color: var(--text-primary, #222);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .detail-section ul {
+      padding-left: 1.2rem;
+    }
+
+    .detail-section ul li {
+      margin-bottom: 0.3rem;
+    }
+
+    .detail-section.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .detail-badge {
+      display: inline-block;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-red {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-orange {
+      background: #ffedd5;
+      color: #c2410c;
+    }
+
+    .badge-yellow {
+      background: #fef9c3;
+      color: #a16207;
+    }
+
+    .badge-green {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .expand-icon {
+      display: inline-block;
+      transition: transform 0.25s ease;
+      font-size: 0.85rem;
+      color: var(--text-tertiary, #999);
+    }
+
+    .case-row.active-row .expand-icon {
+      transform: rotate(90deg);
+    }
+
+    .disclaimer-text {
+      font-size: 0.8rem;
+      color: var(--text-tertiary, #999);
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+  </style>
 </head>
 
 <body>
-
   <!-- ───────────────────── Header ───────────────────── -->
   <header class="site-header">
     <div class="header-inner">
-      <div class="logo">
-        <span class="med-cross" aria-hidden="true">
-          <span class="cross-v"></span>
-          <span class="cross-h"></span>
-        </span>
+      <a href="/" class="logo">
+        <span class="med-cross" aria-hidden="true"></span>
         <h1>Smart Triage</h1>
+      </a>
+      <div class="auth-links" style="display: flex; gap: 1rem; align-items: center;">
+        <span style="font-weight: 600; color: var(--primary-800, #1e40af);">🏥 Hospital Dashboard</span>
+        <a href="/" class="nav-link">← Home</a>
       </div>
-      <p class="tagline">Hospital Authority Dashboard</p>
-      <a href="/" class="nav-link">← Patient Form</a>
     </div>
   </header>
 
@@ -54,11 +187,25 @@
     <!-- ── Cases Table ── -->
     {% if submissions %}
     <section class="card dash-card" aria-label="Patient Cases">
-      <h2 class="card-title">📋 Patient Cases</h2>
+      <h2 class="card-title">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          style="vertical-align: middle; margin-right: 8px;">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Patient Cases
+        <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-tertiary, #999); margin-left: 0.5rem;">
+          (click a row for details)
+        </span>
+      </h2>
       <div class="table-wrapper">
         <table class="dash-table" id="casesTable">
           <thead>
             <tr>
+              <th></th>
               <th>#</th>
               <th>Name</th>
               <th>Age</th>
@@ -70,15 +217,20 @@
             </tr>
           </thead>
           <tbody>
-            {% for case in submissions | reverse %}
-            <tr>
+            {% for case in submissions %}
+            <!-- ── Clickable Summary Row ── -->
+            <tr class="case-row" onclick="toggleDetail(this, 'detail-{{ loop.index }}')" id="row-{{ loop.index }}">
+              <td><span class="expand-icon">▶</span></td>
               <td class="cell-num">{{ submissions | length - loop.index0 }}</td>
               <td class="cell-name">{{ case.name }}</td>
               <td>{{ case.age }}</td>
               <td>
-                {% for s in case.symptoms %}
+                {% for s in case.symptoms[:3] %}
                 <span class="symptom-tag">{{ s }}</span>
                 {% endfor %}
+                {% if case.symptoms | length > 3 %}
+                <span class="symptom-tag" style="opacity: 0.6;">+{{ case.symptoms | length - 3 }} more</span>
+                {% endif %}
               </td>
               <td>
                 <span class="severity-tag severity-tag-{{ case.severity | lower }}">{{ case.severity }}</span>
@@ -86,8 +238,121 @@
               <td>
                 <span class="priority-pill priority-pill-{{ case.priority | lower }}">{{ case.priority }}</span>
               </td>
-              <td>{{ case.score }}</td>
+              <td><strong>{{ case.score }}</strong>/10</td>
               <td class="cell-time">{{ case.timestamp }}</td>
+            </tr>
+
+            <!-- ── Expandable Detail Row ── -->
+            <tr class="detail-row" id="detail-{{ loop.index }}">
+              <td colspan="9">
+                <div class="detail-panel">
+                  <div class="detail-grid">
+
+                    <!-- Contact Info -->
+                    <div class="detail-section">
+                      <h4>👤 Patient Info</h4>
+                      <p><strong>Name:</strong> {{ case.name }}<br>
+                        <strong>Age:</strong> {{ case.age }}<br>
+                        <strong>Contact:</strong> {{ case.contact or 'N/A' }}
+                      </p>
+                    </div>
+
+                    <!-- AI Classification -->
+                    <div class="detail-section">
+                      <h4>🤖 AI Classification</h4>
+                      <p>
+                        {% if case.priority_color %}
+                        <span class="detail-badge badge-{{ case.priority_color | lower }}">
+                          {{ case.priority_color }} — {{ case.priority_label or case.priority }}
+                        </span><br>
+                        {% endif %}
+                        {% if case.probable_diagnosis %}
+                        <strong>Diagnosis:</strong> {{ case.probable_diagnosis }}<br>
+                        {% endif %}
+                        {% if case.recommended_department %}
+                        <strong>Dept:</strong> {{ case.recommended_department }}
+                        {% endif %}
+                      </p>
+                    </div>
+
+                    <!-- All Symptoms -->
+                    <div class="detail-section">
+                      <h4>🩺 Symptoms</h4>
+                      <div>
+                        {% for s in case.symptoms %}
+                        <span class="symptom-tag">{{ s }}</span>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+                    <!-- Risk Factors -->
+                    <div class="detail-section">
+                      <h4>⚠️ Risk Factors</h4>
+                      <p>{{ case.risk_factors or 'Not assessed' }}</p>
+                    </div>
+
+                    <!-- Description -->
+                    {% if case.description %}
+                    <div class="detail-section full-width">
+                      <h4>📝 Patient Description</h4>
+                      <p>{{ case.description }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Medical Description from AI -->
+                    {% if case.medical_description %}
+                    <div class="detail-section full-width">
+                      <h4>🔬 Medical Assessment</h4>
+                      <p>{{ case.medical_description }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Immediate Actions -->
+                    {% if case.immediate_actions %}
+                    <div class="detail-section">
+                      <h4>🚑 Immediate Actions</h4>
+                      <ul>
+                        {% for action in case.immediate_actions %}
+                        <li>{{ action }}</li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- Medication Suggestions -->
+                    {% if case.medication_suggestions %}
+                    <div class="detail-section">
+                      <h4>💊 Medication Suggestions</h4>
+                      <ul>
+                        {% for med in case.medication_suggestions %}
+                        <li>{{ med }}</li>
+                        {% endfor %}
+                      </ul>
+                      <p class="disclaimer-text">{{ case.medication_suggestions_disclaimer or '' }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Delete Button -->
+                    <div class="detail-section full-width"
+                      style="text-align: right; margin-top: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--primary-100, #e0e7ff);">
+                      <form action="/hospital/delete/{{ case.id }}" method="POST" style="display: inline;"
+                        onsubmit="return confirm('Are you sure you want to remove this patient case? This cannot be undone.');">
+                        <button type="submit" class="btn"
+                          style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.5rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s ease; width: auto;">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                            </path>
+                          </svg>
+                          Remove Case
+                        </button>
+                      </form>
+                    </div>
+
+                  </div>
+                </div>
+              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -96,21 +361,39 @@
     </section>
     {% else %}
     <!-- ── Empty State ── -->
-    <section class="card empty-state">
-      <div class="empty-icon">🏥</div>
-      <h2>No Patient Cases Yet</h2>
-      <p>Submitted patient triage cases will appear here in real time.</p>
-      <a href="/" class="btn btn-primary empty-btn">← Go to Patient Form</a>
+    <section class="card empty-state" style="text-align: center; padding: 4rem 2rem;">
+      <div class="empty-icon" style="font-size: 3.5rem; margin-bottom: 1rem; opacity: 0.8;">🏥</div>
+      <h2 style="font-size: 1.5rem; font-family: var(--font-heading); margin-bottom: 0.5rem;">No Patient Cases Yet</h2>
+      <p style="color: var(--text-tertiary); margin-bottom: 2rem;">Submitted patient triage cases will appear here in
+        real time.</p>
+      <a href="/" class="btn btn-primary" style="display: inline-flex; width: auto; max-width: 250px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Go to Patient Form
+      </a>
     </section>
     {% endif %}
 
   </main>
 
-  <!-- ───────────────────── Footer ───────────────────── -->
-  <footer class="site-footer">
-    <p>&copy; 2026 Smart Triage. For guidance only — not a substitute for professional medical advice.</p>
-  </footer>
+  <script>
+    function toggleDetail(rowEl, detailId) {
+      const detailRow = document.getElementById(detailId);
+      const isOpen = detailRow.classList.contains('open');
 
+      // Close all open detail rows first
+      document.querySelectorAll('.detail-row.open').forEach(el => el.classList.remove('open'));
+      document.querySelectorAll('.case-row.active-row').forEach(el => el.classList.remove('active-row'));
+
+      // If the clicked row wasn't already open, open it
+      if (!isOpen) {
+        detailRow.classList.add('open');
+        rowEl.classList.add('active-row');
+      }
+    }
+  </script>
 </body>
 
 </html>

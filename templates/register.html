@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register – Smart Triage</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <!-- ───────────────────── Header ───────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span class="med-cross" aria-hidden="true"></span>
+        <h1>Smart Triage</h1>
+      </a>
+      <div class="auth-links">
+        <a href="/login" class="nav-link">Log In</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="max-width: 500px; margin: 0 auto;">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="flash-alert flash-{{ category }}"
+        style="padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; background: var(--surface-100); border-left: 4px solid var(--primary-500);">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <section class="card" aria-label="Registration Form">
+        <h2 class="card-title">Create an Account</h2>
+        <p class="card-subtitle">Register to keep track of your triage history and reports.</p>
+
+        <form action="/register" method="POST" id="registerForm">
+          <div class="field-group">
+            <legend>Account Credentials</legend>
+            <div class="form-field">
+              <label for="username">Pick a Username <span class="req">*</span></label>
+              <input type="text" id="username" name="username" required placeholder="e.g. jdoe99">
+            </div>
+            <div class="form-field">
+              <label for="password">Choose a Password <span class="req">*</span></label>
+              <input type="password" id="password" name="password" required placeholder="Minimum 6 characters">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <legend>Basic Patient Profile (Optional)</legend>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="John Doe">
+              </div>
+              <div class="form-field">
+                <label for="age">Age</label>
+                <input type="number" id="age" name="age" placeholder="e.g. 34">
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="contact">Contact Number</label>
+              <input type="tel" id="contact" name="contact" placeholder="(555) 000-0000">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+            Register Patient Account
+          </button>
+        </form>
+
+        <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+          Already have an account? <a href="/login" style="color: var(--primary-600); font-weight: 600;">Log in
+            here</a>.
+        </p>
+      </section>
+    </div>
+  </main>
+</body>
+
+</html>

@@ -4,60 +4,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Smart Triage – an intelligent symptom priority tool for emergency consultation guidance.">
-    <title>Smart Triage – Symptom Priority Tool</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description" content="Smart Triage – AI-powered symptom priority and emergency consultation guidance.">
+    <title>Smart Triage – AI Triage Assessment</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-
     <!-- ───────────────────── Header ───────────────────── -->
     <header class="site-header">
         <div class="header-inner">
-            <div class="logo">
-                <!-- CSS-only medical cross icon -->
-                <span class="med-cross" aria-hidden="true">
-                    <span class="cross-v"></span>
-                    <span class="cross-h"></span>
-                </span>
+            <a href="/" class="logo">
+                <span class="med-cross" aria-hidden="true"></span>
                 <h1>Smart Triage</h1>
+            </a>
+            <div class="auth-links" style="display: flex; gap: 1rem; align-items: center;">
+                {% if current_user.is_authenticated %}
+                <span style="font-weight: 600; color: var(--primary-800);">{{ current_user.name or current_user.username
+                    }}</span>
+                {% if current_user.role == 'hospital' %}
+                <a href="/hospital" class="nav-link">Hospital Portal</a>
+                {% else %}
+                <a href="/patient/dashboard" class="nav-link">My History</a>
+                {% endif %}
+                <a href="/logout" class="nav-link"
+                    style="background: transparent; border: none; color: var(--text-secondary);">Log Out</a>
+                {% else %}
+                <a href="/hospital" class="nav-link"
+                    style="background: var(--surface-200); color: var(--text-secondary); border-color: var(--surface-200);">Staff
+                    Portal</a>
+                {% endif %}
             </div>
-            <p class="tagline">Symptom Priority &amp; Guidance Tool</p>
-            <a href="/hospital" class="nav-link">Hospital Portal →</a>
         </div>
     </header>
 
     <!-- ───────────────────── Main ───────────────────── -->
     <main class="container">
-        <section class="card form-card">
+        <!-- Back Navigation -->
+        <div style="margin-bottom: 2rem;">
+            <a href="/"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.2s;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Home Selection
+            </a>
+        </div>
+
+        <!-- Check History Form -->
+        <section class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="font-size: 1.2rem; color: var(--primary-900); margin-bottom: 0.25rem;">Looking for past
+                        triage history?</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Enter your contact number to view your
+                        previous reports.</p>
+                </div>
+                <form action="/patient/history" method="POST"
+                    style="display: flex; gap: 0.5rem; flex: 1; max-width: 400px; margin: 0;">
+                    <input type="tel" name="contact" placeholder="e.g. +91 98765 43210" required
+                        style="flex: 1; padding: 0.75rem; border: 1px solid var(--surface-200); border-radius: var(--radius-sm); font-family: var(--font-body); outline: none;">
+                    <button type="submit" class="btn btn-secondary"
+                        style="padding: 0.75rem 1.5rem; background: var(--primary-100); color: var(--primary-700); border: none; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer;">View
+                        History</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="card">
             <h2 class="card-title">Patient Intake Form</h2>
-            <p class="card-subtitle">Please fill in all fields so we can assess the appropriate level of care.</p>
+            <p class="card-subtitle">Please provide your details below so our AI can accurately assess your symptoms and
+                priority level.</p>
 
             <form action="/triage" method="POST" id="triageForm" novalidate>
-
                 <!-- ── Personal Information ── -->
                 <fieldset class="field-group">
-                    <legend>Personal Information</legend>
-
+                    <legend>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Personal Information
+                    </legend>
                     <div class="form-row">
                         <div class="form-field">
                             <label for="name">Full Name <span class="req">*</span></label>
                             <input type="text" id="name" name="name" placeholder="e.g. Priya Sharma" required>
                             <span class="error-msg" id="nameError">Please enter your name.</span>
                         </div>
-
                         <div class="form-field">
                             <label for="age">Age <span class="req">*</span></label>
                             <input type="number" id="age" name="age" min="0" max="120" placeholder="e.g. 28" required>
                             <span class="error-msg" id="ageError">Please enter a valid age (0–120).</span>
                         </div>
                     </div>
-
                     <div class="form-field">
                         <label for="contact">Contact Number <span class="req">*</span></label>
+
                         <input type="tel" id="contact" name="contact" placeholder="e.g. +91 98765 43210" required>
                         <span class="error-msg" id="contactError">Please enter a contact number.</span>
                     </div>
@@ -65,8 +110,13 @@
 
                 <!-- ── Severity ── -->
                 <fieldset class="field-group">
-                    <legend>How severe do your symptoms feel?</legend>
-
+                    <legend>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        </svg>
+                        How severe do your symptoms feel? <span class="req">*</span>
+                    </legend>
                     <div class="severity-options">
                         <label class="severity-label severity-mild">
                             <input type="radio" name="severity" value="Mild" required>
@@ -86,8 +136,17 @@
 
                 <!-- ── Symptoms ── -->
                 <fieldset class="field-group">
-                    <legend>Select all symptoms that apply <span class="req">*</span></legend>
-
+                    <legend>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Select all symptoms that apply <span class="req">*</span>
+                    </legend>
                     <div class="symptom-grid">
                         {% for symptom in symptoms %}
                         <label class="symptom-label">
@@ -101,8 +160,13 @@
 
                 <!-- ── Description ── -->
                 <fieldset class="field-group">
-                    <legend>Describe your condition</legend>
-
+                    <legend>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        Describe your condition
+                    </legend>
                     <div class="form-field">
                         <label for="description">Tell us more about what you are experiencing</label>
                         <textarea id="description" name="description" rows="4"
@@ -112,28 +176,22 @@
 
                 <!-- ── Submit ── -->
                 <button type="submit" class="btn btn-primary" id="submitBtn">
-                    <span class="btn-icon">⚕</span> Assess My Symptoms
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                    Assess My Symptoms with AI
                 </button>
             </form>
         </section>
     </main>
-
-    <!-- ───────────────────── Footer ───────────────────── -->
-    <footer class="site-footer">
-        <p>&copy; 2026 Smart Triage. For guidance only — not a substitute for professional medical advice.</p>
-    </footer>
 
     <!-- ───────────────────── Client-side validation ───────────────────── -->
     <script>
         (function () {
             const form = document.getElementById('triageForm');
 
-            function showError(id) {
-                document.getElementById(id).classList.add('visible');
-            }
-            function hideError(id) {
-                document.getElementById(id).classList.remove('visible');
-            }
+            function showError(id) { document.getElementById(id).style.display = 'block'; }
+            function hideError(id) { document.getElementById(id).style.display = 'none'; }
 
             // Live: clear errors on input
             form.querySelectorAll('input, textarea').forEach(el => {
@@ -156,36 +214,145 @@
             form.addEventListener('submit', function (e) {
                 let valid = true;
 
-                // Name
-                if (!form.name.value.trim()) { showError('nameError'); valid = false; }
-                else hideError('nameError');
+                if (!form.name.value.trim()) { showError('nameError'); valid = false; } else hideError('nameError');
 
-                // Age
                 const age = parseInt(form.age.value, 10);
-                if (isNaN(age) || age < 0 || age > 120) { showError('ageError'); valid = false; }
-                else hideError('ageError');
+                if (isNaN(age) || age < 0 || age > 120) { showError('ageError'); valid = false; } else hideError('ageError');
 
-                // Contact
-                if (!form.contact.value.trim()) { showError('contactError'); valid = false; }
-                else hideError('contactError');
+                if (!form.contact.value.trim()) { showError('contactError'); valid = false; } else hideError('contactError');
 
-                // Severity
-                if (!form.querySelector('input[name="severity"]:checked')) { showError('severityError'); valid = false; }
-                else hideError('severityError');
+                if (!form.querySelector('input[name="severity"]:checked')) { showError('severityError'); valid = false; } else hideError('severityError');
 
-                // Symptoms
-                if (!form.querySelector('input[name="symptoms"]:checked')) { showError('symptomsError'); valid = false; }
-                else hideError('symptomsError');
+                if (!form.querySelector('input[name="symptoms"]:checked')) { showError('symptomsError'); valid = false; } else hideError('symptomsError');
 
                 if (!valid) {
                     e.preventDefault();
-                    // Scroll to first visible error
-                    const firstErr = form.querySelector('.error-msg.visible');
+                    const firstErr = Array.from(form.querySelectorAll('.error-msg')).find(el => el.style.display === 'block');
                     if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    // Loading state
+                    const btn = document.getElementById('submitBtn');
+                    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> AI Analyzing...`;
+                    btn.style.opacity = '0.8';
+                    btn.style.pointerEvents = 'none';
                 }
             });
         })();
     </script>
+
+    <!-- ───────────────────── Floating Chatbot ───────────────────── -->
+    <div class="chatbot-container" id="chatbotBtn" onclick="toggleChat()">
+        <div class="chatbot-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="med-cross" style="width: 20px; height: 20px; box-shadow: none;" aria-hidden="true"></span>
+                <h3 style="color: white; font-size: 1rem; margin: 0;">Smart Triage Assistant</h3>
+            </div>
+            <button class="chat-close" onclick="toggleChat()">×</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-msg ai">
+                Hello! I'm the Smart Triage AI assistant. How can I help you today? Do you have questions about any
+                symptoms?
+                <br><br><i>Note: I provide general guidance, not professional medical diagnosis.</i>
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chatInput" placeholder="Type a medical question..."
+                onkeypress="handleChatKeyPress(event)">
+            <button onclick="sendChatMessage()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let chatHistory = [];
+
+        function toggleChat() {
+            const win = document.getElementById('chatWindow');
+            const btn = document.getElementById('chatbotBtn');
+            if (win.style.display === 'flex') {
+                win.style.display = 'none';
+                btn.style.transform = 'scale(1)';
+            } else {
+                win.style.display = 'flex';
+                btn.style.transform = 'scale(0)';
+                document.getElementById('chatInput').focus();
+            }
+        }
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            // Add user message
+            appendMessage('user', msg);
+            input.value = '';
+
+            // Show typing indicator
+            const typingId = 'typing-' + Date.now();
+            appendMessage('ai', '<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>', typingId);
+
+            try {
+                const response = await fetch('/api/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, history: chatHistory })
+                });
+
+                const data = await response.json();
+
+                // Remove typing indicator
+                document.getElementById(typingId).remove();
+
+                if (data.error) {
+                    appendMessage('system', data.error);
+                } else {
+                    appendMessage('ai', data.response.replace(/\n/g, '<br>'));
+
+                    // Update history
+                    chatHistory.push({ role: 'user', parts: msg });
+                    chatHistory.push({ role: 'model', parts: data.response });
+                }
+            } catch (err) {
+                document.getElementById(typingId).remove();
+                appendMessage('system', 'Connection error. Please try again.');
+            }
+        }
+
+        function appendMessage(role, text, id = null) {
+            const body = document.getElementById('chatBody');
+            const div = document.createElement('div');
+            div.className = `chat-msg ${role}`;
+            if (id) div.id = id;
+            div.innerHTML = text;
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+        }
+    </script>
+    <style>
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </body>
 
 </html>

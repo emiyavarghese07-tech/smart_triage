@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login – Smart Triage</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <!-- ───────────────────── Header ───────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <span class="med-cross" aria-hidden="true"></span>
+        <h1>Smart Triage</h1>
+      </a>
+      <div class="auth-links">
+        <a href="/register" class="nav-link">Create Account</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="max-width: 450px; margin: 0 auto;">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="flash-alert flash-{{ category }}"
+        style="padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; background: var(--surface-100); color: var(--text-primary); border-left: 4px solid var(--primary-500);">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <section class="card" aria-label="Login Form">
+        <h2 class="card-title">Welcome Back</h2>
+        <p class="card-subtitle">Log in to hospital dashboard.</p>
+
+        <form action="/login" method="POST" id="loginForm">
+          <div class="form-field">
+            <label for="username">Username <span class="req">*</span></label>
+            <input type="text" id="username" name="username" required placeholder="Enter your username">
+          </div>
+
+          <div class="form-field">
+            <label for="password">Password <span class="req">*</span></label>
+            <input type="password" id="password" name="password" required placeholder="Enter your password">
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            Log In
+          </button>
+        </form>
+
+        <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+          Don't have an account? <a href="/register" style="color: var(--primary-600); font-weight: 600;">Register
+            here</a>.
+        </p>
+      </section>
+    </div>
+  </main>
+</body>
+
+</html>
