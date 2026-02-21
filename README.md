@@ -4,7 +4,7 @@
 
 Smart Triage – Symptom Priority Tool 🏥🎯
 Basic Details
-Team Name: Smart Triage
+Team Name: Emiya Varghese 
 
 Member :Emiya Varghese - Viswajyothi College of Engineering and Technology
 
@@ -276,9 +276,7 @@ Testing and debugging
 
 Team Contributions
 
-[Your Name]: Backend logic, Flask routing, triage algorithm
-
-[Teammate Name]: UI design, CSS styling, testing & documentation
+Emiya Varghese: Backend logic, Flask routing, triage algorithm, UI design, CSS styling, testing & documentation
 
 License
 
