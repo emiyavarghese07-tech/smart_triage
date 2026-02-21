@@ -161,14 +161,15 @@ Patient Summary Section – Displays final classification and next steps
 Diagrams
 System Architecture:
 
-Explanation:
+<p align="center">
+  <img src="./sysarchi.png" alt="Project Banner" width="100%">
+</p>
 
-User → HTML Form → Flask Backend →
-Triage Logic (if/else rules) →
-Priority Classification →
-Rendered Result Page (Color-coded UI)
 
-Application Workflow:
+
+Application Workflow:<p align="center">
+  <img src="./workflow.png" alt="Project Banner" width="100%">
+</p>
 
 Workflow Steps:
 
